@@ -4,7 +4,8 @@ public class PlayerController : MonoBehaviour
 {
     // Elementos RB y Collider
     Rigidbody2D rb;
-    Collider2D hitBox;
+    CapsuleCollider2D hitBox;
+    public BoxCollider2D groundDetection;
     // Direccion de movimiento
     float moveX;
     float moveY;
@@ -15,11 +16,19 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float jumpForce = 5f;
     // Tipo de suelo pisado
     SueloPisado sueloPisado;
+    // Direccion de personaje
+    DireccionPersonaje direccionPersonaje;
+    Animator anim;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        hitBox = GetComponent<Collider2D>();
+        hitBox = GetComponent<CapsuleCollider2D>();
+        anim = GetComponent<Animator>();
+    }
+    void Start()
+    {
+        direccionPersonaje = DireccionPersonaje.derecha;
     }
 
     void Update()
@@ -44,11 +53,50 @@ public class PlayerController : MonoBehaviour
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
             jumpPressed = false;
         }
+
+        // Cambio direccion
+        if (moveX > 0.1f && direccionPersonaje == DireccionPersonaje.izquierda)
+        {
+            GirarPersonaje(DireccionPersonaje.derecha);
+        }
+        else if (moveX < -0.1f && direccionPersonaje == DireccionPersonaje.derecha)
+        {
+            GirarPersonaje(DireccionPersonaje.izquierda);
+        }
+
+        CambiosDeAnimaciones();
     }
 
     public void TipoDeSueloPisado(string suelo)
     {
         // Convertimos y asignamos el suelo de String a enum
         sueloPisado = (SueloPisado)System.Enum.Parse(typeof(SueloPisado), suelo);
+    }
+    void GirarPersonaje(DireccionPersonaje nuevaDireccion)
+    {
+        direccionPersonaje = nuevaDireccion;
+
+        Vector3 escala = transform.localScale;
+        escala.x *= -1;
+        transform.localScale = escala;
+    }
+    void CambiosDeAnimaciones()
+    {
+        AnimacionCorrer();
+    }
+    void AnimacionCorrer()
+    {
+        if (moveX != 0)
+        {
+            anim.SetBool("Run", true);
+            hitBox.size = new Vector2(hitBox.size.x, 0.24f);
+            groundDetection.offset = new Vector2(groundDetection.offset.x, -0.14f);
+        }
+        else
+        {
+            anim.SetBool("Run", false);
+            hitBox.size = new Vector2(hitBox.size.x, 0.29f);
+            groundDetection.offset = new Vector2(groundDetection.offset.x, -0.17f);
+        }
     }
 }

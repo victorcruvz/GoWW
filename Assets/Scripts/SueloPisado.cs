@@ -7,3 +7,8 @@ public enum SueloPisado
     Fango,
     Aire
 }
+public enum DireccionPersonaje
+{
+    izquierda,
+    derecha
+}
