@@ -12,3 +12,13 @@ public enum DireccionPersonaje
     izquierda,
     derecha
 }
+public enum EstadoPlayer
+{
+    Idle,
+    Run,
+    Attack,
+    Hited,
+    Dead,
+    Slowed,
+    Jump
+}

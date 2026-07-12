@@ -5,6 +5,7 @@ public class PlayerController : MonoBehaviour
     // Elementos RB y Collider
     Rigidbody2D rb;
     CapsuleCollider2D hitBox;
+    Animator anim;
     public BoxCollider2D groundDetection;
     // Direccion de movimiento
     float moveX;
@@ -18,7 +19,8 @@ public class PlayerController : MonoBehaviour
     SueloPisado sueloPisado;
     // Direccion de personaje
     DireccionPersonaje direccionPersonaje;
-    Animator anim;
+    // Estados del jugador
+    EstadoPlayer estadoPlayer;
 
     void Awake()
     {
@@ -40,6 +42,12 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetButtonDown("Jump"))
             jumpPressed = true;
+
+        if (Input.GetKeyDown(KeyCode.J))
+            AnimacionAtaque();
+
+        if (Input.GetKeyDown(KeyCode.U))
+            AnimacionAtaqueRun();
     }
 
     void FixedUpdate()
@@ -83,6 +91,7 @@ public class PlayerController : MonoBehaviour
     void CambiosDeAnimaciones()
     {
         AnimacionCorrer();
+        AnimacionSaltoCaida();
     }
     void AnimacionCorrer()
     {
@@ -91,6 +100,7 @@ public class PlayerController : MonoBehaviour
             anim.SetBool("Run", true);
             hitBox.size = new Vector2(hitBox.size.x, 0.24f);
             groundDetection.offset = new Vector2(groundDetection.offset.x, -0.14f);
+            estadoPlayer = EstadoPlayer.Run;
         }
         else
         {
@@ -98,5 +108,30 @@ public class PlayerController : MonoBehaviour
             hitBox.size = new Vector2(hitBox.size.x, 0.29f);
             groundDetection.offset = new Vector2(groundDetection.offset.x, -0.17f);
         }
+    }
+    void AnimacionSaltoCaida()
+    {
+        anim.SetBool("Jump", sueloPisado == SueloPisado.Aire);
+        estadoPlayer = EstadoPlayer.Jump;
+    }
+    void AnimacionAtaque()
+    {
+        anim.SetTrigger("Attack");
+        estadoPlayer = EstadoPlayer.Attack;
+    }
+    public void AnimacionAtaqueOff()
+    {
+        Debug.Log("Ataque Finalizado");
+        anim.SetBool("Attack", false);
+    }
+    void AnimacionAtaqueRun()
+    {
+        anim.SetTrigger("AttackRun");
+        estadoPlayer = EstadoPlayer.Attack;
+    }
+    public void AnimacionAttaqueRunOff()
+    {
+        anim.SetBool("AttackRun", false);
+        //AttackRun
     }
 }
