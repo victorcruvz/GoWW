@@ -4,7 +4,9 @@
 TagManager:
   serializedVersion: 3
   tags:
-  - Ground
+  - Suelo
+  - Pared
+  - Agua
   layers:
   - Default
   - TransparentFX
@@ -12,9 +14,9 @@ TagManager:
   - Player
   - Water
   - UI
-  - Ground
-  - 
-  - 
+  - Suelo
+  - Pared
+  - Agua
   - 
   - 
   - 

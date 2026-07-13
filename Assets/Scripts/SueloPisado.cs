@@ -1,24 +1,40 @@
 // Tipo de suelo pisado
-public enum SueloPisado
+public enum DondeEsta
 {
-    Ground,
+    Suelo,
+    Aire,
     Pared,
-    Agua,
-    Fango,
-    Aire
+    Agua
 }
 public enum DireccionPersonaje
 {
-    izquierda,
-    derecha
+    Izquierda,
+    Derecha
 }
-public enum EstadoPlayer
+public enum MovimientoHoriz
 {
-    Idle,
-    Run,
-    Attack,
-    Hited,
-    Dead,
-    Slowed,
-    Jump
+    Quieto,
+    Avanzando,
+    Dash
+}
+public enum MovimientoVert
+{
+    Quieto, 
+    SaltoCaida
+}
+public enum Combate
+{
+    Quieto,
+    Ataque
+}
+public enum Estado
+{
+    Normal,
+    Invulnerable,
+    Muerto
+}
+public enum Efectos
+{
+    Normal,
+    Relentizado
 }

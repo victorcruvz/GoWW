@@ -16,11 +16,18 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float speed = 5f;
     [SerializeField] float jumpForce = 5f;
     // Tipo de suelo pisado
-    SueloPisado sueloPisado;
+    DondeEsta dondeEsta;
     // Direccion de personaje
     DireccionPersonaje direccionPersonaje;
+    // Estados de Movimiento
+    MovimientoHoriz movimientoHoriz;
+    MovimientoVert movimientoVert;
     // Estados del jugador
-    EstadoPlayer estadoPlayer;
+    Estado estado;
+    // Estados que afectan al jugador
+    Efectos efectos;
+    // Estado de Combate
+    Combate combate;
 
     void Awake()
     {
@@ -30,7 +37,8 @@ public class PlayerController : MonoBehaviour
     }
     void Start()
     {
-        direccionPersonaje = DireccionPersonaje.derecha;
+        direccionPersonaje = DireccionPersonaje.Derecha;
+        movimientoHoriz = MovimientoHoriz.Quieto;
     }
 
     void Update()
@@ -46,30 +54,43 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.J))
             AnimacionAtaque();
 
-        if (Input.GetKeyDown(KeyCode.U))
-            AnimacionAtaqueRun();
+        if (Input.GetKeyDown(KeyCode.L))
+            movimientoHoriz = MovimientoHoriz.Dash;
     }
 
     void FixedUpdate()
     {
         // Movimiento X
-        rb.linearVelocity = new Vector2(moveX * speed, rb.linearVelocity.y);
+        if (moveX != 0 && movimientoHoriz != MovimientoHoriz.Dash)
+        {
+            rb.linearVelocity = new Vector2(moveX * speed, rb.linearVelocity.y);
+            movimientoHoriz = MovimientoHoriz.Avanzando;
+        }
+        else if (moveX == 0 && movimientoHoriz != MovimientoHoriz.Dash)
+        {
+            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+            movimientoHoriz = MovimientoHoriz.Quieto;
+        }
+        else if (movimientoHoriz == MovimientoHoriz.Dash)
+        {
+            DashActivacion();
+        }
 
         // Movimiento Y
-        if (jumpPressed && sueloPisado != SueloPisado.Aire)
+        if (jumpPressed && dondeEsta != DondeEsta.Aire)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
             jumpPressed = false;
         }
 
         // Cambio direccion
-        if (moveX > 0.1f && direccionPersonaje == DireccionPersonaje.izquierda)
+        if (moveX > 0.1f && direccionPersonaje == DireccionPersonaje.Izquierda)
         {
-            GirarPersonaje(DireccionPersonaje.derecha);
+            GirarPersonaje(DireccionPersonaje.Derecha);
         }
-        else if (moveX < -0.1f && direccionPersonaje == DireccionPersonaje.derecha)
+        else if (moveX < -0.1f && direccionPersonaje == DireccionPersonaje.Derecha)
         {
-            GirarPersonaje(DireccionPersonaje.izquierda);
+            GirarPersonaje(DireccionPersonaje.Izquierda);
         }
 
         CambiosDeAnimaciones();
@@ -78,7 +99,7 @@ public class PlayerController : MonoBehaviour
     public void TipoDeSueloPisado(string suelo)
     {
         // Convertimos y asignamos el suelo de String a enum
-        sueloPisado = (SueloPisado)System.Enum.Parse(typeof(SueloPisado), suelo);
+        dondeEsta = (DondeEsta)System.Enum.Parse(typeof(DondeEsta), suelo);
     }
     void GirarPersonaje(DireccionPersonaje nuevaDireccion)
     {
@@ -88,50 +109,88 @@ public class PlayerController : MonoBehaviour
         escala.x *= -1;
         transform.localScale = escala;
     }
+    void DashActivacion()
+    {
+        ReducirHitBox(0.16f, -0.1f);
+        Debug.Log($"Se entro a DashActivacion");
+        AnimacionDash();
+    }
     void CambiosDeAnimaciones()
     {
         AnimacionCorrer();
         AnimacionSaltoCaida();
     }
+    void RunActivacion()
+    {
+        AnimacionCorrer();
+    }
     void AnimacionCorrer()
     {
-        if (moveX != 0)
+        if (/*moveX != 0 && */movimientoHoriz == MovimientoHoriz.Avanzando)
         {
             anim.SetBool("Run", true);
-            hitBox.size = new Vector2(hitBox.size.x, 0.24f);
-            groundDetection.offset = new Vector2(groundDetection.offset.x, -0.14f);
-            estadoPlayer = EstadoPlayer.Run;
+            ReducirHitBox(0.24f, -0.14f);
         }
-        else
+        else if (movimientoHoriz != MovimientoHoriz.Dash)
         {
             anim.SetBool("Run", false);
-            hitBox.size = new Vector2(hitBox.size.x, 0.29f);
-            groundDetection.offset = new Vector2(groundDetection.offset.x, -0.17f);
+            ReestablecerHitBox();
         }
+    }
+    void ReestablecerHitBox()
+    {
+        hitBox.size = new Vector2(hitBox.size.x, 0.29f);
+        groundDetection.offset = new Vector2(groundDetection.offset.x, -0.17f);
+    }
+    void ReducirHitBox(float altura, float suelo)
+    {
+        Debug.Log($"Se entro a ReducirHitBox {altura} y {suelo}");
+        hitBox.size = new Vector2(hitBox.size.x, altura);
+        groundDetection.offset = new Vector2(groundDetection.offset.x, suelo);
     }
     void AnimacionSaltoCaida()
     {
-        anim.SetBool("Jump", sueloPisado == SueloPisado.Aire);
-        estadoPlayer = EstadoPlayer.Jump;
+        anim.SetBool("Jump", dondeEsta == DondeEsta.Aire);
     }
     void AnimacionAtaque()
     {
-        anim.SetTrigger("Attack");
-        estadoPlayer = EstadoPlayer.Attack;
+            anim.SetTrigger("Attack");
     }
     public void AnimacionAtaqueOff()
     {
-        Debug.Log("Ataque Finalizado");
         anim.SetBool("Attack", false);
+        anim.SetBool("AttackRun", false);
     }
     void AnimacionAtaqueRun()
     {
         anim.SetTrigger("AttackRun");
-        estadoPlayer = EstadoPlayer.Attack;
     }
     public void AnimacionAttaqueRunOff()
     {
+        anim.SetBool("Attack", false);
         anim.SetBool("AttackRun", false);
-        //AttackRun
+    }
+    void AnimacionDash()
+    {
+        anim.SetTrigger("Dash");
+    }
+    public void AnimacionDashOff()
+    {
+        movimientoHoriz = MovimientoHoriz.Quieto;
+        anim.SetBool("Dash", false);
+        ReestablecerHitBox();
     }
 }
+
+
+
+
+/*
+DondeEsta
+DireccionPersonaje
+MovimientoHoriz
+MovimientoVert
+Combate
+Estado
+Efectos
+*/
