@@ -25,7 +25,8 @@ public enum MovimientoVert
 public enum Combate
 {
     Quieto,
-    Ataque
+    Ataque,
+    AtaqueAereo
 }
 public enum Estado
 {
