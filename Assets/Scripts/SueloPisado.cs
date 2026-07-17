@@ -6,6 +6,11 @@ public enum DondeEsta
     Pared,
     Agua
 }
+public enum ParedContacto
+{
+    Pared,
+    Aire
+}
 public enum DireccionPersonaje
 {
     Izquierda,

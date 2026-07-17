@@ -1,19 +1,24 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
     // Elementos RB y Collider
     Rigidbody2D rb;
     Animator anim;
+    SpriteRenderer sprite;
     CapsuleCollider2D hitBox;
     public BoxCollider2D groundDetection;
     public GameObject contAttkDobColl;
     public GameObject contAttkRunColl;
+    // Vidas
+    int vidas = 2;
     // Direccion de movimiento
     float moveX;
     float moveY;
     bool jumpPressed;
+    bool jumpWall;
     // Variables de ejecucion
     [Header("Fuerzas")]
     [SerializeField] float speed = 5f;
@@ -27,6 +32,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float slowFact = 0.4f;
     // Tipo de suelo pisado
     DondeEsta dondeEsta;
+    // Estado tocando pared
+    ParedContacto paredContacto;
     // Direccion de personaje
     DireccionPersonaje direccionPersonaje;
     // Estados de Movimiento
@@ -44,9 +51,11 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         hitBox = GetComponent<CapsuleCollider2D>();
         anim = GetComponent<Animator>();
+        sprite = GetComponent<SpriteRenderer>();
     }
     void Start()
     {
+        vidas = 2;
         direccionPersonaje = DireccionPersonaje.Derecha;
         movimientoHoriz = MovimientoHoriz.Quieto;
         combate = Combate.Quieto;
@@ -56,19 +65,32 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        // Izquierda -1 | Derecha +1
-        moveX = Input.GetAxisRaw("Horizontal");
-        // Abajo -1 | Arriba +1
-        moveY = Input.GetAxisRaw("Vertical");
+        if (estado != Estado.Muerto)
+        {
+            // Izquierda -1 | Derecha +1
+            moveX = Input.GetAxisRaw("Horizontal");
+            // Abajo -1 | Arriba +1
+            moveY = Input.GetAxisRaw("Vertical");
 
-        if (Input.GetButtonDown("Jump") && combate != Combate.Ataque)
-            jumpPressed = true;
+            if (Input.GetButtonDown("Jump") && combate != Combate.Ataque)
+            {
+                if (dondeEsta != DondeEsta.Aire)
+                    jumpPressed = true;
+                else if (paredContacto == ParedContacto.Pared)
+                {
+                    jumpPressed = true;
+                    jumpWall = true;
+                }
+            }
 
-        if (Input.GetKeyDown(KeyCode.J) /*&& dondeEsta != DondeEsta.Aire*/)
-            StartCoroutine(Atacar());
+            if (Input.GetKeyDown(KeyCode.J) && paredContacto != ParedContacto.Pared)
+                StartCoroutine(Atacar());
 
-        if (Input.GetKeyDown(KeyCode.L) && dondeEsta != DondeEsta.Aire && combate != Combate.Ataque)
-            movimientoHoriz = MovimientoHoriz.Dash;
+            if (Input.GetKeyDown(KeyCode.L) && dondeEsta != DondeEsta.Aire && combate != Combate.Ataque)
+                movimientoHoriz = MovimientoHoriz.Dash;
+        }
+        else if (estado == Estado.Muerto)
+            moveX = 0;
     }
 
     void FixedUpdate()
@@ -90,20 +112,22 @@ public class PlayerController : MonoBehaviour
         }
 
         // Movimiento Y
-        if (jumpPressed && dondeEsta != DondeEsta.Aire)
+        if (jumpPressed)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
             jumpPressed = false;
+
+            if (jumpWall)
+                SaltoEnMuro();
         }
 
         // Cambio direccion
-        if (moveX > 0.1f && direccionPersonaje == DireccionPersonaje.Izquierda)
+        if (combate == Combate.Quieto)
         {
-            GirarPersonaje(DireccionPersonaje.Derecha);
-        }
-        else if (moveX < -0.1f && direccionPersonaje == DireccionPersonaje.Derecha)
-        {
-            GirarPersonaje(DireccionPersonaje.Izquierda);
+            if (moveX > 0.1f && direccionPersonaje == DireccionPersonaje.Izquierda)
+                GirarPersonaje(DireccionPersonaje.Derecha);
+            else if (moveX < -0.1f && direccionPersonaje == DireccionPersonaje.Derecha)
+                GirarPersonaje(DireccionPersonaje.Izquierda);
         }
 
         CambiosDeAnimaciones();
@@ -114,6 +138,11 @@ public class PlayerController : MonoBehaviour
         // Convertimos y asignamos el suelo de String a enum
         dondeEsta = (DondeEsta)System.Enum.Parse(typeof(DondeEsta), suelo);
     }
+    public void TipoDeMuroContacto(string muro)
+    {
+        // Convertimos y asignamos la pared de String a enum
+        paredContacto = (ParedContacto)System.Enum.Parse(typeof(ParedContacto), muro);
+    }
     void GirarPersonaje(DireccionPersonaje nuevaDireccion)
     {
         direccionPersonaje = nuevaDireccion;
@@ -121,6 +150,33 @@ public class PlayerController : MonoBehaviour
         Vector3 escala = transform.localScale;
         escala.x *= -1;
         transform.localScale = escala;
+    }
+    void RecibirAtaque()
+    {
+        vidas--;
+
+        if (vidas == 1)
+        {
+            estado = Estado.Invulnerable;
+            StartCoroutine(AnimacionGolpe());
+        }
+        else if (vidas == 0)
+        {
+            estado = Estado.Muerto;
+            AnimacionMuerte();
+        }
+    }
+    void SaltoEnMuro()
+    {
+        jumpWall = false;
+        int ladoImpulso = 0;
+
+        if (direccionPersonaje == DireccionPersonaje.Izquierda)
+            ladoImpulso = 1;
+        else
+            ladoImpulso = -1;
+
+        rb.linearVelocity = new Vector2(10 * ladoImpulso, jumpForce);
     }
     void DashActivacion()
     {
@@ -182,6 +238,7 @@ public class PlayerController : MonoBehaviour
     {
         AnimacionCorrer();
         AnimacionSaltoCaida();
+        AnimacionAgarradoMuro();
     }
     void AnimacionCorrer()
     {
@@ -222,5 +279,61 @@ public class PlayerController : MonoBehaviour
         movimientoHoriz = MovimientoHoriz.Quieto;
         anim.SetBool("Dash", false);
         ReestablecerHitBox();
+    }
+    void AnimacionAgarradoMuro()
+    {
+        if (paredContacto == ParedContacto.Pared && dondeEsta != DondeEsta.Suelo)
+        {
+            anim.SetBool("Wall", true);
+        }
+        else
+        {
+            anim.SetBool("Wall", false);
+        }
+    }
+    void AnimacionMuerte()
+    {
+        anim.SetBool("Dead", true);
+    }
+    IEnumerator AnimacionGolpe()
+    {
+        Color c = sprite.color;
+
+        float tiempo = 0f;
+
+        // Parpade por daño
+        while (tiempo < invulTime)
+        {
+            c.a = 0.3f;
+            sprite.color = c;
+            yield return new WaitForSeconds(0.1f);
+
+            c.a = 1f;
+            sprite.color = c;
+            yield return new WaitForSeconds(0.1f);
+
+            tiempo += 0.2f;
+        }
+
+        c.a = 1f;
+        sprite.color = c;
+        estado = Estado.Normal;
+    }
+    public void FinAnimacionGolpe()
+    {
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag == "Damage" && estado != Estado.Invulnerable)
+        {
+        Debug.Log("Entro el Daño");
+            RecibirAtaque();
+        }
+    }
+
+    public void Reiniciar()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
