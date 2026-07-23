@@ -368,6 +368,8 @@ MonoBehaviour:
   dashDuration: 0.2
   invulTime: 2
   slowFact: 0.4
+  knockbackForce: {x: 0.5, y: 1}
+  knockbackDuration: 0.5
 --- !u!50 &332272601
 Rigidbody2D:
   serializedVersion: 5
@@ -1561,7 +1563,7 @@ BoxCollider2D:
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 40286dcda303bf64eafbf161e1303d47, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

@@ -1,0 +1,38 @@
+{
+    "My Behavior Climb Economy": {
+        "checkpoints": [
+            {
+                "steps": 499958,
+                "file_path": "results\\ClimbEconomy_ConOjos\\My Behavior Climb Economy\\My Behavior Climb Economy-499958.onnx",
+                "reward": -0.24821346428017227,
+                "creation_time": 1784586437.4053538,
+                "auxillary_file_paths": [
+                    "results\\ClimbEconomy_ConOjos\\My Behavior Climb Economy\\My Behavior Climb Economy-499958.pt"
+                ]
+            },
+            {
+                "steps": 500022,
+                "file_path": "results\\ClimbEconomy_ConOjos\\My Behavior Climb Economy\\My Behavior Climb Economy-500022.onnx",
+                "reward": -0.24821346428017227,
+                "creation_time": 1784586437.477952,
+                "auxillary_file_paths": [
+                    "results\\ClimbEconomy_ConOjos\\My Behavior Climb Economy\\My Behavior Climb Economy-500022.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 500022,
+            "file_path": "results\\ClimbEconomy_ConOjos\\My Behavior Climb Economy.onnx",
+            "reward": -0.24821346428017227,
+            "creation_time": 1784586437.477952,
+            "auxillary_file_paths": [
+                "results\\ClimbEconomy_ConOjos\\My Behavior Climb Economy\\My Behavior Climb Economy-500022.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.1.2+cpu"
+    }
+}

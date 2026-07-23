@@ -45,6 +45,11 @@ public class PlayerController : MonoBehaviour
     Efectos efectos;
     // Estado de Combate
     Combate combate;
+    // Cuando se recibe daño
+    bool isKnockedBack;
+    [SerializeField] Vector2 knockbackForce = new Vector2(2f, 1f);
+    [SerializeField] float knockbackDuration = 0.18f;
+    Vector2 directDamag = new Vector2(0, 0);
 
     void Awake()
     {
@@ -61,54 +66,61 @@ public class PlayerController : MonoBehaviour
         combate = Combate.Quieto;
         estado = Estado.Normal;
         efectos = Efectos.Normal;
+        isKnockedBack = false;
     }
 
     void Update()
     {
-        if (estado != Estado.Muerto)
+        if (!isKnockedBack)
         {
-            // Izquierda -1 | Derecha +1
-            moveX = Input.GetAxisRaw("Horizontal");
-            // Abajo -1 | Arriba +1
-            moveY = Input.GetAxisRaw("Vertical");
-
-            if (Input.GetButtonDown("Jump") && combate != Combate.Ataque)
+            if (estado != Estado.Muerto)
             {
-                if (dondeEsta != DondeEsta.Aire)
-                    jumpPressed = true;
-                else if (paredContacto == ParedContacto.Pared)
+                // Izquierda -1 | Derecha +1
+                moveX = Input.GetAxisRaw("Horizontal");
+                // Abajo -1 | Arriba +1
+                moveY = Input.GetAxisRaw("Vertical");
+
+                if (Input.GetButtonDown("Jump") && combate != Combate.Ataque)
                 {
-                    jumpPressed = true;
-                    jumpWall = true;
+                    if (dondeEsta != DondeEsta.Aire)
+                        jumpPressed = true;
+                    else if (paredContacto == ParedContacto.Pared)
+                    {
+                        jumpPressed = true;
+                        jumpWall = true;
+                    }
                 }
+
+                if (Input.GetKeyDown(KeyCode.J) && paredContacto != ParedContacto.Pared)
+                    StartCoroutine(Atacar());
+
+                if (Input.GetKeyDown(KeyCode.L) && dondeEsta != DondeEsta.Aire && combate != Combate.Ataque)
+                    movimientoHoriz = MovimientoHoriz.Dash;
             }
-
-            if (Input.GetKeyDown(KeyCode.J) && paredContacto != ParedContacto.Pared)
-                StartCoroutine(Atacar());
-
-            if (Input.GetKeyDown(KeyCode.L) && dondeEsta != DondeEsta.Aire && combate != Combate.Ataque)
-                movimientoHoriz = MovimientoHoriz.Dash;
+            else if (estado == Estado.Muerto)
+                moveX = 0;
         }
-        else if (estado == Estado.Muerto)
-            moveX = 0;
     }
 
     void FixedUpdate()
     {
         // Movimiento X
-        if (moveX != 0 && movimientoHoriz != MovimientoHoriz.Dash && combate != Combate.Ataque)
+        if (!isKnockedBack)
         {
-            rb.linearVelocity = new Vector2(moveX * speed, rb.linearVelocity.y);
-            movimientoHoriz = MovimientoHoriz.Avanzando;
-        }
-        else if (moveX == 0 && movimientoHoriz != MovimientoHoriz.Dash)
-        {
-            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
-            movimientoHoriz = MovimientoHoriz.Quieto;
-        }
-        else if (movimientoHoriz == MovimientoHoriz.Dash)
-        {
-            DashActivacion();
+            if (moveX != 0 && movimientoHoriz != MovimientoHoriz.Dash && combate != Combate.Ataque)
+            {
+                rb.linearVelocity = new Vector2(moveX * speed, rb.linearVelocity.y);
+                movimientoHoriz = MovimientoHoriz.Avanzando;
+            }
+            else if (moveX == 0 && movimientoHoriz != MovimientoHoriz.Dash)
+            {
+                rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+                movimientoHoriz = MovimientoHoriz.Quieto;
+            }
+            else if (movimientoHoriz == MovimientoHoriz.Dash)
+            {
+                DashActivacion();
+            }
         }
 
         // Movimiento Y
@@ -157,7 +169,9 @@ public class PlayerController : MonoBehaviour
 
         if (vidas == 1)
         {
+            anim.SetTrigger("Damage");
             estado = Estado.Invulnerable;
+            StartCoroutine(KnockbackRoutine());
             StartCoroutine(AnimacionGolpe());
         }
         else if (vidas == 0)
@@ -183,6 +197,21 @@ public class PlayerController : MonoBehaviour
         ReducirHitBox(0.16f, -0.1f);
         StartCoroutine(IniciarDash());
         AnimacionDash();
+    }
+    public void RecibirDireccionDelDamage(Vector2 recibirDireccionDelDamage)
+    {
+        directDamag = recibirDireccionDelDamage;
+    }
+    IEnumerator KnockbackRoutine()
+    {
+        isKnockedBack = true;
+        rb.linearVelocity = Vector2.zero;
+        float hitDirectionX = transform.position.x < directDamag.x ? -1f : 1f;
+        Vector2 force = new Vector2(hitDirectionX * knockbackForce.x, knockbackForce.y);
+        
+        rb.AddForce(force, ForceMode2D.Impulse);
+        yield return new WaitForSeconds(knockbackDuration);
+        isKnockedBack = false;
     }
     IEnumerator IniciarDash()
     {
@@ -321,13 +350,14 @@ public class PlayerController : MonoBehaviour
     }
     public void FinAnimacionGolpe()
     {
+        anim.SetBool("Damage", false);
     }
 
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.tag == "Damage" && estado != Estado.Invulnerable)
         {
-        Debug.Log("Entro el Daño");
+        //Debug.Log("Entro el Daño");
             RecibirAtaque();
         }
     }

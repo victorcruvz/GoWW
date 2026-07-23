@@ -38,4 +38,13 @@ public class GroundStatus : MonoBehaviour
                 playerController.TipoDeMuroContacto("Aire");
         }
     }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Damage"))
+        {
+            Vector2 direccionDamage = collision.transform.position;
+            playerController.RecibirDireccionDelDamage(direccionDamage);
+        }
+    }
 }
