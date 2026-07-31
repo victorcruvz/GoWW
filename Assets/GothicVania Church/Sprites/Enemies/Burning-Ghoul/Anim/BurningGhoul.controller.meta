@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 9678eeda4e9be1f49a730a1ea7ed936c
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 147117
+  packageName: GothicVania Church Pack
+  packageVersion: 1.1
+  assetPath: Assets/GothicVania Church/Sprites/Enemies/Burning-Ghoul/Anim/BurningGhoul.controller
+  uploadId: 923500

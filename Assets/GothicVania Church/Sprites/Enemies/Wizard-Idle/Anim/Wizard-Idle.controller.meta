@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: cb27a9375ceec3144aa6aae9d889735a
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 147117
+  packageName: GothicVania Church Pack
+  packageVersion: 1.1
+  assetPath: Assets/GothicVania Church/Sprites/Enemies/Wizard-Idle/Anim/Wizard-Idle.controller
+  uploadId: 923500

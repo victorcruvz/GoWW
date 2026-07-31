@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: db40f6d1da5f74542bbe3db4d40dcbb7
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 147117
+  packageName: GothicVania Church Pack
+  packageVersion: 1.1
+  assetPath: Assets/GothicVania Church/Sprites/Player/Anim/Fall.prefab
+  uploadId: 923500

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 5f5d41d374df29f4a9452de46f2d443b
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 147117
+  packageName: GothicVania Church Pack
+  packageVersion: 1.1
+  assetPath: Assets/GothicVania Church/Sprites/Enemies/Angel-Idle/Anim/AngelIdle.controller
+  uploadId: 923500

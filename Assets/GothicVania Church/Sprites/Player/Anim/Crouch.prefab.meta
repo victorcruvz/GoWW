@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: df9fe229fb08d7843ac3da7641096a96
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 147117
+  packageName: GothicVania Church Pack
+  packageVersion: 1.1
+  assetPath: Assets/GothicVania Church/Sprites/Player/Anim/Crouch.prefab
+  uploadId: 923500

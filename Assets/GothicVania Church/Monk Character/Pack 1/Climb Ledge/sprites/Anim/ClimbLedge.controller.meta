@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 2f38f4561e810c947b78ea2ca65e95d5
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 147117
+  packageName: GothicVania Church Pack
+  packageVersion: 1.1
+  assetPath: Assets/GothicVania Church/Monk Character/Pack 1/Climb Ledge/sprites/Anim/ClimbLedge.controller
+  uploadId: 923500

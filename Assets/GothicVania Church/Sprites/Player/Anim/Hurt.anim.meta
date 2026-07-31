@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 41c16099de8e1ca47a268f9dbfc2e0f2
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 147117
+  packageName: GothicVania Church Pack
+  packageVersion: 1.1
+  assetPath: Assets/GothicVania Church/Sprites/Player/Anim/Hurt.anim
+  uploadId: 923500

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 4b3fb05f4b8fa3b4b916b8c4364c7058
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 147117
+  packageName: GothicVania Church Pack
+  packageVersion: 1.1
+  assetPath: Assets/GothicVania Church/Sprites/Enemies/Angel-Attack/Anim/AngelAttack.controller
+  uploadId: 923500

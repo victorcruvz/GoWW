@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b530d0b6828680f4ebc1c375df5d393b
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 147117
+  packageName: GothicVania Church Pack
+  packageVersion: 1.1
+  assetPath: Assets/GothicVania Church/Sprites/Enemies/Wizard-Fire/Anim/WizardFire.anim
+  uploadId: 923500

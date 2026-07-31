@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 6230f4c377afe374b820229eb8d24815
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 147117
+  packageName: GothicVania Church Pack
+  packageVersion: 1.1
+  assetPath: Assets/GothicVania Church/Sprites/Player/Anim/Walk.anim
+  uploadId: 923500
