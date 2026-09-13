@@ -9,6 +9,7 @@ public class Enemy_Bat : MonoBehaviour
     CapsuleCollider2D hitBox;
 
     int vidas = 2;
+    bool miraHaciaDerecha = true;
 
     [Header("Otros Scrips")]
     [SerializeField] Enemies_Detections detector;
@@ -39,15 +40,33 @@ public class Enemy_Bat : MonoBehaviour
     {
         if (detector != null && detector.isPlayerDetected && detector.playerTransform != null)
         {
-            Vector3 playerPosition = detector.playerTransform.position;
-            playerPosition = new Vector3(playerPosition.x-0.6f, playerPosition.y+0.1f, playerPosition.z);
+            Vector3 targetPos = detector.playerTransform.position;
+            // Orientar en X
+            GirarHaciaObjetivo(targetPos.x);
+            float offsetX = (targetPos.x > transform.position.x) ? -0.6f : 0.6f;
+            Vector3 playerPosition = new Vector3(targetPos.x + offsetX, targetPos.y + 0.1f, targetPos.z);
             transform.position = Vector3.MoveTowards(transform.position, playerPosition, speed * Time.deltaTime);
             detectionEffect.SetActive(true);
         }
         else
         {
-            detectionEffect.SetActive(false);
+            if (detectionEffect != null)
+                detectionEffect.SetActive(false);
         }
     }
+    void GirarHaciaObjetivo(float objetivoX)
+    {
+        Vector3 escala = transform.localScale;
+
+        if (objetivoX > transform.position.x)
+        {
+            escala.x = Mathf.Abs(escala.x);
+        }
+        else if (objetivoX < transform.position.x)
+        {
+            escala.x = -Mathf.Abs(escala.x);
+        }
+
+        transform.localScale = escala;
+    }
 }
-//X = 0.2 | Y = 0.1
