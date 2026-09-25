@@ -51,6 +51,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float knockbackDuration = 0.18f;
     Vector2 directDamag = new Vector2(0, 0);
 
+    public Estado estadoActualJugador;
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -100,6 +101,7 @@ public class PlayerController : MonoBehaviour
             else if (estado == Estado.Muerto)
                 moveX = 0;
         }
+        estadoActualJugador = estado;
     }
 
     void FixedUpdate()
@@ -353,11 +355,18 @@ public class PlayerController : MonoBehaviour
         anim.SetBool("Damage", false);
     }
 
-    void OnTriggerEnter2D(Collider2D collision)
+    //void OnTriggerEnter2D(Collider2D collision)
+    //{
+    //    if (collision.tag == "Damage" && estado != Estado.Invulnerable)
+    //    {
+    //    //Debug.Log("Entro el Daño");
+    //        RecibirAtaque();
+    //    }
+    //}
+    public void AtaqueRecivido()
     {
-        if (collision.tag == "Damage" && estado != Estado.Invulnerable)
+        if (estado != Estado.Invulnerable)
         {
-        //Debug.Log("Entro el Daño");
             RecibirAtaque();
         }
     }

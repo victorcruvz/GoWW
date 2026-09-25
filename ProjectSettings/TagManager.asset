@@ -11,6 +11,8 @@ TagManager:
   - Damage
   - Target
   - Enemy
+  - VoidZone
+  - DetectionVoid
   layers:
   - Default
   - TransparentFX
@@ -25,8 +27,8 @@ TagManager:
   - Damage
   - Target
   - Enemy
-  - 
-  - 
+  - VoidZone
+  - DetectionVoid
   - 
   - 
   - 

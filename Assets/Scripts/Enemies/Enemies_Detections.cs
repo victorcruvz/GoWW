@@ -5,30 +5,63 @@ public class Enemies_Detections : MonoBehaviour
     public bool isPlayerDetected { get; private set; }
     public Transform playerTransform { get; private set; }
 
-    private void Start()
+    PlayerController player;
+
+    void Awake()
+    {
+        player = FindAnyObjectByType<PlayerController>();
+    }
+    void Start()
     {
         isPlayerDetected = false;
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    void Update()
     {
-        if (collision.CompareTag("Player"))
+        if (player != null)
         {
-            isPlayerDetected = true;
-            playerTransform = collision.transform;
+            if (player.estadoActualJugador != Estado.Normal)
+            {
+                //Debug.Log($"El estado es: {player.estadoActualJugador}");
+            }
         }
     }
 
-    private void OnTriggerStay2D(Collider2D collision)
+    void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
         {
-            isPlayerDetected = true;
-            playerTransform = collision.transform;
+            if (player.estadoActualJugador == Estado.Normal)
+            {
+                isPlayerDetected = true;
+                playerTransform = collision.transform;
+            }
+            else
+            {
+                isPlayerDetected = false;
+                playerTransform = null;
+            }
         }
     }
 
-    private void OnTriggerExit2D(Collider2D collision)
+    void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Player"))
+        {
+            if (player.estadoActualJugador == Estado.Normal)
+            {
+                isPlayerDetected = true;
+                playerTransform = collision.transform;
+            }
+            else
+            {
+                isPlayerDetected = false;
+                playerTransform = null;
+            }
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
         {
